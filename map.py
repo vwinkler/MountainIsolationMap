@@ -1,0 +1,17 @@
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+
+
+class Map:
+    def __init__(self):
+        self.fig = plt.figure(figsize=(10, 5))
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=ccrs.Robinson())
+        self.ax.set_global()
+        self.ax.stock_img()
+        self.ax.coastlines()
+
+    def addMountain(self, mountain):
+        self.ax.plot(mountain.longtitude, mountain.latitude, '^', transform=ccrs.PlateCarree())
+
+    def show(self):
+        plt.show()
