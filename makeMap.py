@@ -4,13 +4,10 @@ from qwikidata.sparql import (get_subclasses_of_item,
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
-# send any sparql query to the wikidata query service and get full result back
-# here we use an example that counts the number of humans
 sparql_query = """
 SELECT ?item ?itemLabel ?elevation ?location ?lat ?lon
 WHERE 
 {
-#  ?item wdt:P31 wd:Q8502.
   ?item p:P625 ?location.
   ?item p:P2044/psn:P2044/wikibase:quantityAmount ?elevation .
   ?item wdt:P31 wd:Q8502 ;
@@ -18,25 +15,12 @@ WHERE
     psv:P625 [
       wikibase:geoLatitude ?lat ;
       wikibase:geoLongitude ?lon ;
-#      wikibase:geoGlobe ?globe ;
     ] ;
-#    ps:P625 ?coord
   ].
   FILTER(?elevation > 8000)
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 }
 LIMIT 3
-"""
-
-x = """
-SELECT ?item ?itemLabel ?elevation
-WHERE 
-{
-  ?item wdt:P31 wd:Q8502.
-  ?item p:P2044/psn:P2044/wikibase:quantityAmount ?elevation .
-  FILTER(?elevation > 8000)
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-}
 """
 
 res = return_sparql_query_results(sparql_query)
