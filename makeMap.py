@@ -1,6 +1,12 @@
+import argparse
 import pickle
 import wikidataDownload
 from map import Map
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--force-download', '-d', action='store_true', dest='forceDownload')
+parser.add_argument('--no-download', action='store_true', dest='noDownload')
+parser.add_argument('--no-map', action='store_true', dest='noMap')
 
 cacheFileName = "mountainsCache.pkl"
 
@@ -10,24 +16,34 @@ def loadMountains():
 def storeMountains(mountains):
     pickle.dump(mountains, open(cacheFileName, "wb"))
 
+def downloadAndCacheMountains():
+    print("Downloading mountains from Wikidata...")
+    mountains = wikidataDownload.loadMountains()
+    storeMountains(mountains)
+    return mountains
+
 def main():
-    try:
-        print("Load mountains mountains from cache..")
-        mountains = loadMountains()
-    except:
-        print("Could not load mountains from cache.")
-        print("Downloading mountains from Wikidata...")
-        mountains = wikidataDownload.loadMountains()
-        storeMountains(mountains)
+    args = parser.parse_args()
+    if not args.forceDownload:
+        try:
+            print("Load mountains mountains from cache...")
+            mountains = loadMountains()
+        except:
+            print("Could not load mountains from cache.")
+            if not args.noDownload:
+                mountains = downloadAndCacheMountains()
+    else:
+        mountains = downloadAndCacheMountains()
 
     for mountain in mountains:
         pattern = "{} ({} {}): {} meters"
         print(pattern.format(mountain.name, mountain.latitude, mountain.longtitude, mountain.elevation))
-    
-    map = Map()
-    for mountain in mountains:
-        map.addMountain(mountain)
-    map.show()
+
+    if not args.noMap:
+        map = Map()
+        for mountain in mountains:
+            map.addMountain(mountain)
+        map.show()
 
 
 if __name__ == '__main__':
