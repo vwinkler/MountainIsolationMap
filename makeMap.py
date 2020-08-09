@@ -42,8 +42,8 @@ def main():
         return
 
     for mountain in mountains:
-        pattern = "{} ({} {}): {} meters"
-        print(pattern.format(mountain.name, mountain.latitude, mountain.longtitude, mountain.elevation))
+        pattern = "({} {}): {} meters"
+        print(pattern.format(mountain.latitude, mountain.longtitude, mountain.elevation))
 
     if not args.noMap:
         map = Map()

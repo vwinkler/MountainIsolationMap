@@ -3,7 +3,7 @@ from qwikidata.sparql import (get_subclasses_of_item,
 from mountain import Mountain
 
 sparql_query = """
-SELECT ?item ?itemLabel ?elevation ?location ?lat ?lon
+SELECT ?item ?elevation ?location ?lat ?lon
 WHERE 
 {
   ?item p:P625 ?location.
@@ -15,10 +15,8 @@ WHERE
       wikibase:geoLongitude ?lon ;
     ] ;
   ].
-  FILTER(?elevation > 8000)
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+  FILTER(?elevation >= 4000)
 }
-LIMIT 3
 """
 
 def loadRawDataMountains():
@@ -30,7 +28,6 @@ def convertMountains(wikidataResults):
     mountains = []
     for item in wikidataResults["results"]["bindings"]:
         mountain = Mountain()
-        mountain.name = item["itemLabel"]["value"]
         mountain.latitude = float(item["lat"]["value"])
         mountain.longtitude = float(item["lon"]["value"])
         mountain.elevation = float(item["elevation"]["value"])
