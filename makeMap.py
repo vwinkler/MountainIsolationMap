@@ -1,3 +1,4 @@
+import sys
 import argparse
 import pickle
 import wikidataDownload
@@ -24,6 +25,7 @@ def downloadAndCacheMountains():
 
 def main():
     args = parser.parse_args()
+    mountains = None
     if not args.forceDownload:
         try:
             print("Load mountains mountains from cache...")
@@ -34,6 +36,10 @@ def main():
                 mountains = downloadAndCacheMountains()
     else:
         mountains = downloadAndCacheMountains()
+
+    if mountains == None:
+        sys.stderr.write("Error while trying to load mountains\n")
+        return
 
     for mountain in mountains:
         pattern = "{} ({} {}): {} meters"
