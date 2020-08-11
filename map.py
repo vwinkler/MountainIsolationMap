@@ -13,5 +13,8 @@ class Map:
     def addMountain(self, longtitude, latitude):
         self.ax.plot(longtitude, latitude, '^', transform=ccrs.PlateCarree())
 
+    def addDomination(self, longtitude, latitude, longtitudeDominator, latitudeDominator):
+        self.ax.plot([longtitude, longtitudeDominator], [latitude, latitudeDominator], transform=ccrs.PlateCarree())
+
     def show(self):
         plt.show()

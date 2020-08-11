@@ -3,6 +3,7 @@ import argparse
 import pickle
 import wikidataDownload
 from map import Map
+from edgeFinding import *
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--force-download', '-d', action='store_true', dest='forceDownload')
@@ -49,6 +50,15 @@ def main():
         map = Map()
         for mountain in mountains:
             map.addMountain(mountain.longtitude, mountain.latitude)
+        dominationFinder = SimpleDominatorFinder(mountains)
+        for mountain in mountains:
+            try:
+                dominator = dominationFinder.findDominator(mountain)
+                pattern = "({} {}): {} meters"
+                print(pattern.format(dominator.latitude, dominator.longtitude, dominator.elevation))
+                map.addDomination(mountain.longtitude, mountain.latitude, dominator.longtitude, dominator.latitude)
+            except ValueError:
+                pass
         map.show()
 
 
