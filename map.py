@@ -10,8 +10,8 @@ class Map:
         self.ax.stock_img()
         self.ax.coastlines()
 
-    def addMountain(self, mountain):
-        self.ax.plot(mountain.longtitude, mountain.latitude, '^', transform=ccrs.PlateCarree())
+    def addMountain(self, longtitude, latitude):
+        self.ax.plot(longtitude, latitude, '^', transform=ccrs.PlateCarree())
 
     def show(self):
         plt.show()

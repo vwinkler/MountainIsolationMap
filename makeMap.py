@@ -48,7 +48,7 @@ def main():
     if not args.noMap:
         map = Map()
         for mountain in mountains:
-            map.addMountain(mountain)
+            map.addMountain(mountain.longtitude, mountain.latitude)
         map.show()
 
 
