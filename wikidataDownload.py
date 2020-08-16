@@ -3,19 +3,32 @@ from qwikidata.sparql import (get_subclasses_of_item,
 from mountain import Mountain
 
 sparql_query = """
-SELECT ?item ?elevation ?location ?lat ?lon
-WHERE 
+SELECT ?continent ?maxElevation ?item ?lon ?lat
 {
+  {
+    SELECT (MAX(?elevation) AS ?maxElevation) ?continent
+    WHERE
+    {
+      ?item wdt:P31 wd:Q8502.
+      ?item wdt:P30 ?continent.
+      ?item p:P2044/psn:P2044/wikibase:quantityAmount ?elevation .
+      ?continent wdt:P31 wd:Q5107.
+
+
+    }
+  GROUP BY ?continent
+  }
+  
+  ?item wdt:P30 ?continent.
+  ?item p:P2044/psn:P2044/wikibase:quantityAmount ?maxElevation .
   ?item p:P625 ?location.
-  ?item p:P2044/psn:P2044/wikibase:quantityAmount ?elevation .
   ?item wdt:P31 wd:Q8502 ;
-  p:P625 [
-    psv:P625 [
-      wikibase:geoLatitude ?lat ;
-      wikibase:geoLongitude ?lon ;
-    ] ;
-  ].
-  FILTER(?elevation >= 4000)
+        p:P625 [
+          psv:P625 [
+            wikibase:geoLatitude ?lat ;
+            wikibase:geoLongitude ?lon ;
+          ] ;
+        ].
 }
 """
 
@@ -30,7 +43,7 @@ def convertMountains(wikidataResults):
         mountain = Mountain()
         mountain.latitude = float(item["lat"]["value"])
         mountain.longtitude = float(item["lon"]["value"])
-        mountain.elevation = float(item["elevation"]["value"])
+        mountain.elevation = float(item["maxElevation"]["value"])
         mountains.append(mountain)
     return mountains
 
