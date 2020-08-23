@@ -46,6 +46,3 @@ def convertMountains(wikidataResults):
         mountain.elevation = float(item["maxElevation"]["value"])
         mountains.append(mountain)
     return mountains
-
-def loadMountains():
-    return convertMountains(loadRawDataMountains())

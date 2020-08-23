@@ -1,7 +1,8 @@
 import sys
 import argparse
 import pickle
-import wikidataDownload
+import json
+from wikidataDownload import *
 from map import Map
 from edgeFinding import *
 
@@ -9,6 +10,7 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--force-download', '-d', action='store_true', dest='forceDownload')
 parser.add_argument('--no-download', action='store_true', dest='noDownload')
 parser.add_argument('--no-map', action='store_true', dest='noMap')
+parser.add_argument('--load-json', '-j', type=str, dest='jsonFile', default=None)
 
 cacheFileName = "mountainsCache.pkl"
 
@@ -18,25 +20,34 @@ def loadMountains():
 def storeMountains(mountains):
     pickle.dump(mountains, open(cacheFileName, "wb"))
 
-def downloadAndCacheMountains():
+def downloadloadMountains():
+    return convertMountains(loadRawDataMountains())
+
+def loadMountainsFromJson(filename):
+    print("Loading mountains from '{}'...".format(filename))
+    return convertMountains(json.load(open(filename, "rb")))
+
+def downloadMountains():
     print("Downloading mountains from Wikidata...")
-    mountains = wikidataDownload.loadMountains()
-    storeMountains(mountains)
-    return mountains
+    return downloadloadMountains()
 
 def main():
     args = parser.parse_args()
     mountains = None
-    if not args.forceDownload:
+    if args.forceDownload:
+        mountains = downloadMountains()
+        storeMountains(mountains)
+    elif args.jsonFile is not None:
+        mountains = loadMountainsFromJson(args.jsonFile)
+    else:
         try:
             print("Load mountains mountains from cache...")
             mountains = loadMountains()
         except:
             print("Could not load mountains from cache.")
             if not args.noDownload:
-                mountains = downloadAndCacheMountains()
-    else:
-        mountains = downloadAndCacheMountains()
+                mountains = downloadMountains()
+                storeMountains(mountains)
 
     if mountains == None:
         sys.stderr.write("Error while trying to load mountains\n")
