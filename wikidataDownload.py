@@ -3,23 +3,20 @@ from qwikidata.sparql import (get_subclasses_of_item,
 from mountain import Mountain
 
 sparql_query = """
-SELECT ?continent ?maxElevation ?item ?lon ?lat
+SELECT ?country ?maxElevation ?item ?lon ?lat
 {
   {
-    SELECT (MAX(?elevation) AS ?maxElevation) ?continent
+    SELECT (MAX(?elevation) AS ?maxElevation) ?country
     WHERE
     {
       ?item wdt:P31 wd:Q8502.
-      ?item wdt:P30 ?continent.
+      ?item wdt:P17 ?country.
       ?item p:P2044/psn:P2044/wikibase:quantityAmount ?elevation .
-      ?continent wdt:P31 wd:Q5107.
-
-
     }
-  GROUP BY ?continent
+  GROUP BY ?country
   }
   
-  ?item wdt:P30 ?continent.
+  ?item wdt:P17 ?country.
   ?item p:P2044/psn:P2044/wikibase:quantityAmount ?maxElevation .
   ?item p:P625 ?location.
   ?item wdt:P31 wd:Q8502 ;
